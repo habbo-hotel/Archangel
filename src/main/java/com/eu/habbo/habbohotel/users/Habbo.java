@@ -13,8 +13,8 @@ import com.eu.habbo.habbohotel.rooms.Room;
 import com.eu.habbo.habbohotel.rooms.chat.RoomChatMessage;
 import com.eu.habbo.habbohotel.rooms.constants.RoomChatMessageBubbles;
 import com.eu.habbo.habbohotel.rooms.constants.RoomUserAction;
-import com.eu.habbo.habbohotel.rooms.items.entities.RoomItem;
 import com.eu.habbo.habbohotel.rooms.entities.units.types.RoomHabbo;
+import com.eu.habbo.habbohotel.rooms.items.entities.RoomItem;
 import com.eu.habbo.habbohotel.units.type.Avatar;
 import com.eu.habbo.habbohotel.users.inventory.BadgesComponent;
 import com.eu.habbo.messages.ServerMessage;
@@ -40,6 +40,9 @@ import java.net.SocketAddress;
 import java.sql.ResultSet;
 import java.sql.SQLException;
 import java.util.*;
+import java.util.concurrent.Executors;
+import java.util.concurrent.ScheduledExecutorService;
+import java.util.concurrent.TimeUnit;
 import java.util.stream.Collectors;
 
 @Slf4j
@@ -153,47 +156,58 @@ public class Habbo extends Avatar implements Runnable {
             if (Emulator.getPluginManager().fireEvent(new UserDisconnectEvent(this)).isCancelled()) return;
         }
 
-        if (this.disconnected || this.disconnecting)
+        if (this.disconnected || this.disconnecting) {
             return;
+        }
 
-        this.disconnecting = true;
+        int logoutDelay = Emulator.getConfig().getInt("roleplay.logout.delay_seconds", 10);
 
-        try {
-            if (this.getRoomUnit().getRoom() != null) {
-                Emulator.getGameEnvironment().getRoomManager().leaveRoom(this, this.getRoomUnit().getRoom());
-            }
-            if (this.getHabboInfo().getRoomQueueId() > 0) {
-                Room room = Emulator.getGameEnvironment().getRoomManager().getActiveRoomById(this.getHabboInfo().getRoomQueueId());
+        this.shout(Emulator.getTexts().getValue("roleplay.generic.logout_started").replace(":seconds", String.valueOf(logoutDelay)));
 
-                if (room != null) {
-                    room.removeFromQueue(this);
+        ScheduledExecutorService executor = Executors.newSingleThreadScheduledExecutor();
+
+        executor.schedule(() -> {
+
+            this.disconnecting = true;
+
+            try {
+                if (this.getRoomUnit().getRoom() != null) {
+                    Emulator.getGameEnvironment().getRoomManager().leaveRoom(this, this.getRoomUnit().getRoom());
                 }
+                if (this.getHabboInfo().getRoomQueueId() > 0) {
+                    Room room = Emulator.getGameEnvironment().getRoomManager().getActiveRoomById(this.getHabboInfo().getRoomQueueId());
+
+                    if (room != null) {
+                        room.removeFromQueue(this);
+                    }
+                }
+            } catch (Exception e) {
+                log.error("Caught exception", e);
             }
-        } catch (Exception e) {
-            log.error("Caught exception", e);
-        }
 
-        try {
-            Emulator.getGameEnvironment().getGuideManager().userLogsOut(this);
-            this.isOnline(false);
-            this.needsUpdate(true);
-            this.run();
-            this.getInventory().dispose();
-            this.messenger.connectionChanged(this, false, false);
-            this.messenger.dispose();
-            this.disconnected = true;
-            AchievementManager.saveAchievements(this);
+            try {
+                Emulator.getGameEnvironment().getGuideManager().userLogsOut(this);
+                this.isOnline(false);
+                this.needsUpdate(true);
+                this.run();
+                this.getInventory().dispose();
+                this.messenger.connectionChanged(this, false, false);
+                this.messenger.dispose();
+                this.disconnected = true;
+                AchievementManager.saveAchievements(this);
 
-            this.habboStats.dispose();
-        } catch (Exception e) {
-            log.error("Caught exception", e);
-            return;
-        } finally {
-            Emulator.getGameEnvironment().getRoomManager().unloadRoomsForHabbo(this);
-            Emulator.getGameEnvironment().getHabboManager().removeHabbo(this);
-        }
-        log.info("{} disconnected.", this.habboInfo.getUsername());
-        this.client = null;
+                this.habboStats.dispose();
+            } catch (Exception e) {
+                log.error("Caught exception", e);
+                return;
+            } finally {
+                Emulator.getGameEnvironment().getRoomManager().unloadRoomsForHabbo(this);
+                Emulator.getGameEnvironment().getHabboManager().removeHabbo(this);
+            }
+            log.info("{} disconnected.", this.habboInfo.getUsername());
+            this.client = null;
+
+        }, logoutDelay, TimeUnit.SECONDS);
     }
 
     @Override
