@@ -306,7 +306,7 @@ public class SSOTicketEvent extends MessageHandler {
                     }
 
                     HabboRoleplayStats rpStats = this.client.getHabbo().getHabboRoleplayStats();
-                    RoomTile lastUserPos = this.client.getHabbo().getRoomUnit().getRoom().getLayout().getTile(rpStats.getLastPosX(),rpStats.getLastPosY());
+                    RoomTile lastUserPos = this.client.getHabbo().getRoomUnit().getRoom().getLayout().getClosestWalkableTile(rpStats.getLastPosX(),rpStats.getLastPosY());
                     this.client.getHabbo().getRoomUnit().setLocation(lastUserPos);
                 }, 250);
 

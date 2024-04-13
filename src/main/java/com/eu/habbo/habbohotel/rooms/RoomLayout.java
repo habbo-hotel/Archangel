@@ -309,6 +309,46 @@ public class RoomLayout {
         return null;
     }
 
+    public List<RoomTile> getAdjacentTiles(short x, short y) {
+        List<RoomTile> adjacentTiles = new ArrayList<>();
+        adjacentTiles.add(this.getTile(x, (short) (y - 1))); // Above
+        adjacentTiles.add(this.getTile(x, (short) (y + 1))); // Below
+        adjacentTiles.add(this.getTile((short) (x - 1), y)); // Left
+        adjacentTiles.add(this.getTile((short) (x + 1), y)); // Right
+
+        return adjacentTiles;
+    }
+
+    public RoomTile getClosestWalkableTile(short x, short y) {
+        RoomTile startTile = getTile(x, y);
+        if (startTile == null || startTile.isWalkable()) {
+            return startTile; // Return the start tile if it's walkable or null
+        }
+
+        Queue<RoomTile> queue = new ArrayDeque<>();
+        boolean[][] visited = new boolean[this.getMapSizeX()][this.getMapSizeY()]; // Assuming width and height are the dimensions of the room layout
+
+        queue.add(startTile);
+        visited[x][y] = true;
+
+        while (!queue.isEmpty()) {
+            for (RoomTile adjacentTile : this.getAdjacentTiles(x, y)) {
+                if (adjacentTile == null) {
+                    continue;
+                }
+                int adjX = adjacentTile.getX();
+                int adjY = adjacentTile.getY();
+
+                visited[adjX][adjY] = true;
+                if (adjacentTile.isWalkable()) {
+                    return adjacentTile; // Return the walkable tile
+                }
+                queue.add(adjacentTile);
+            }
+        }
+        return null;
+    }
+
     private RoomTile findTile(List<RoomTile> tiles, short x, short y) {
         for (RoomTile tile : tiles) {
             if (x == tile.getX() && y == tile.getY()) {
