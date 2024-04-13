@@ -10,6 +10,7 @@ import com.eu.habbo.habbohotel.modtool.ModToolSanctions;
 import com.eu.habbo.habbohotel.navigation.NavigatorSavedSearch;
 import com.eu.habbo.habbohotel.permissions.Permission;
 import com.eu.habbo.habbohotel.rooms.RoomManager;
+import com.eu.habbo.habbohotel.rooms.RoomTile;
 import com.eu.habbo.habbohotel.users.Habbo;
 import com.eu.habbo.habbohotel.users.HabboManager;
 import com.eu.habbo.habbohotel.users.clothingvalidation.ClothingValidationManager;
@@ -37,7 +38,7 @@ import com.eu.habbo.messages.outgoing.unknown.BuildersClubSubscriptionStatusMess
 import com.eu.habbo.messages.outgoing.users.*;
 import com.eu.habbo.plugin.events.emulator.SSOAuthenticationEvent;
 import com.eu.habbo.plugin.events.users.UserLoginEvent;
-import com.eu.habbo.roleplay.messages.outgoing.user.UserRoleplayStatsChangeComposer;
+import com.eu.habbo.roleplay.users.HabboRoleplayStats;
 import gnu.trove.map.hash.THashMap;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -296,8 +297,18 @@ public class SSOTicketEvent extends MessageHandler {
                 }
 
                 Emulator.getThreading().run(() -> {
-                    this.client.getHabbo().getRoomUnit().getRoom().sendComposer((new UserRoleplayStatsChangeComposer(this.client.getHabbo()).compose()));
-                }, Emulator.getConfig().getInt("roleplay.login.stats.delay", 1500));
+                    while (this.client.getHabbo().getRoomUnit()== null) {
+                        try {
+                            Thread.sleep(100); // Adjust the sleep time as needed
+                        } catch (InterruptedException e) {
+                            e.printStackTrace();
+                        }
+                    }
+
+                    HabboRoleplayStats rpStats = this.client.getHabbo().getHabboRoleplayStats();
+                    RoomTile lastUserPos = this.client.getHabbo().getRoomUnit().getRoom().getLayout().getTile(rpStats.getLastPosX(),rpStats.getLastPosY());
+                    this.client.getHabbo().getRoomUnit().setLocation(lastUserPos);
+                }, 100);
 
                 if (SubscriptionHabboClub.HC_PAYDAY_ENABLED) {
                     SubscriptionHabboClub.processUnclaimed(habbo);

@@ -11,10 +11,10 @@ import com.eu.habbo.roleplay.corp.Corp;
 import com.eu.habbo.roleplay.corp.CorpManager;
 import com.eu.habbo.roleplay.corp.CorpPosition;
 import com.eu.habbo.roleplay.corp.CorpShiftManager;
-import com.eu.habbo.roleplay.room.FacilityHospitalManager;
 import com.eu.habbo.roleplay.government.GovernmentManager;
 import com.eu.habbo.roleplay.items.interactions.InteractionHospitalBed;
 import com.eu.habbo.roleplay.messages.outgoing.user.UserRoleplayStatsChangeComposer;
+import com.eu.habbo.roleplay.room.FacilityHospitalManager;
 import com.eu.habbo.roleplay.weapons.Weapon;
 import lombok.Getter;
 import org.slf4j.Logger;
@@ -89,6 +89,10 @@ public class HabboRoleplayStats implements Runnable {
     private Habbo escortedBy;
     @Getter
     private Habbo isEscorting;
+    @Getter
+    private short lastPosX;
+    @Getter
+    private short lastPosY;
 
     public void setHealth(int healthCurrent) {
         this.setHealth(healthCurrent, false);
@@ -218,6 +222,11 @@ public class HabboRoleplayStats implements Runnable {
         this.habbo.getRoomUnit().getRoom().sendComposer(new UserRoleplayStatsChangeComposer(this.habbo).compose());
     }
 
+    public void setLastPos(short x, short y) {
+        this.lastPosX = x;
+        this.lastPosY = y;
+    }
+
     public int getDamageModifier() {
         Random random = new Random();
         int damageModifier = random.nextInt(10) + 1;
@@ -244,6 +253,8 @@ public class HabboRoleplayStats implements Runnable {
         this.corporationID = set.getInt("corporation_id");
         this.corporationPositionID = set.getInt("corporation_position_id");
         this.gangID = set.getInt("gang_id") != 0 ? set.getInt("gang_id") : null;
+        this.lastPosX = set.getShort("last_pos_x");
+        this.lastPosY = set.getShort("last_pos_y");
     }
 
     public void dispose() {
@@ -254,7 +265,7 @@ public class HabboRoleplayStats implements Runnable {
     @Override
     public void run() {
         try (Connection connection = Emulator.getDatabase().getDataSource().getConnection()) {
-            try (PreparedStatement statement = connection.prepareStatement("UPDATE rp_users_stats SET health_now = ?, health_max = ?, energy_now = ?, energy_max = ?, hunger_now = ?, hunger_max = ?, corporation_id = ?, corporation_position_id = ?, gang_id = ? WHERE user_id = ? LIMIT 1")) {
+            try (PreparedStatement statement = connection.prepareStatement("UPDATE rp_users_stats SET health_now = ?, health_max = ?, energy_now = ?, energy_max = ?, hunger_now = ?, hunger_max = ?, corporation_id = ?, corporation_position_id = ?, gang_id = ?, last_pos_x = ?, last_pos_y = ? WHERE user_id = ? LIMIT 1")) {
                 statement.setInt(1, this.healthNow);
                 statement.setInt(2, this.healthMax);
                 statement.setInt(3, this.energyNow);
@@ -267,7 +278,10 @@ public class HabboRoleplayStats implements Runnable {
                 if (this.gangID != null) statement.setInt(9, this.gangID);
                 if (this.gangID == null) statement.setNull(9, Types.INTEGER);
 
-                statement.setInt(10, this.habbo.getHabboInfo().getId());
+                statement.setShort(10, this.lastPosX);
+                statement.setShort(11, this.lastPosY);
+
+                statement.setInt(12, this.habbo.getHabboInfo().getId());
                 statement.executeUpdate();
             }
         } catch (SQLException e) {

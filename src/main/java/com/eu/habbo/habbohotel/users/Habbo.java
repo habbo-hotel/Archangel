@@ -10,6 +10,7 @@ import com.eu.habbo.habbohotel.messenger.Messenger;
 import com.eu.habbo.habbohotel.permissions.Permission;
 import com.eu.habbo.habbohotel.pets.Pet;
 import com.eu.habbo.habbohotel.rooms.Room;
+import com.eu.habbo.habbohotel.rooms.RoomTile;
 import com.eu.habbo.habbohotel.rooms.chat.RoomChatMessage;
 import com.eu.habbo.habbohotel.rooms.constants.RoomChatMessageBubbles;
 import com.eu.habbo.habbohotel.rooms.constants.RoomUserAction;
@@ -40,9 +41,6 @@ import java.net.SocketAddress;
 import java.sql.ResultSet;
 import java.sql.SQLException;
 import java.util.*;
-import java.util.concurrent.Executors;
-import java.util.concurrent.ScheduledExecutorService;
-import java.util.concurrent.TimeUnit;
 import java.util.stream.Collectors;
 
 @Slf4j
@@ -160,14 +158,14 @@ public class Habbo extends Avatar implements Runnable {
             return;
         }
 
-        int logoutDelay = Emulator.getConfig().getInt("roleplay.logout.delay_seconds", 10);
+        int logoutDelay = Emulator.getConfig().getInt("roleplay.logout.delay", 10000);
+        log.info("{} logging out in " + (logoutDelay/1000) + " seconds", this.habboInfo.getUsername());
+        this.shout(Emulator.getTexts().getValue("roleplay.generic.logout_started").replace(":seconds", String.valueOf(logoutDelay / 1000)));
 
-        this.shout(Emulator.getTexts().getValue("roleplay.generic.logout_started").replace(":seconds", String.valueOf(logoutDelay)));
+        RoomTile currPos = this.getRoomUnit().getCurrentPosition();
+        this.habboRoleplayStats.setLastPos(currPos.getX(), currPos.getY());
 
-        ScheduledExecutorService executor = Executors.newSingleThreadScheduledExecutor();
-
-        executor.schedule(() -> {
-
+        Emulator.getThreading().run(() -> {
             this.disconnecting = true;
 
             try {
@@ -197,6 +195,7 @@ public class Habbo extends Avatar implements Runnable {
                 AchievementManager.saveAchievements(this);
 
                 this.habboStats.dispose();
+                this.habboRoleplayStats.dispose();
             } catch (Exception e) {
                 log.error("Caught exception", e);
                 return;
@@ -206,8 +205,7 @@ public class Habbo extends Avatar implements Runnable {
             }
             log.info("{} disconnected.", this.habboInfo.getUsername());
             this.client = null;
-
-        }, logoutDelay, TimeUnit.SECONDS);
+        },  logoutDelay);
     }
 
     @Override
