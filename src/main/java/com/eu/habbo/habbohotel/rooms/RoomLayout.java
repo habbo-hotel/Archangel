@@ -326,26 +326,29 @@ public class RoomLayout {
         }
 
         Queue<RoomTile> queue = new ArrayDeque<>();
-        boolean[][] visited = new boolean[this.getMapSizeX()][this.getMapSizeY()]; // Assuming width and height are the dimensions of the room layout
+        boolean[][] visited = new boolean[this.getMapSizeX()][this.getMapSizeY()];
 
         queue.add(startTile);
         visited[x][y] = true;
 
         while (!queue.isEmpty()) {
-            for (RoomTile adjacentTile : this.getAdjacentTiles(x, y)) {
-                if (adjacentTile == null) {
+            RoomTile currentTile = queue.poll();
+
+            for (RoomTile adjacentTile : this.getAdjacentTiles(currentTile.getX(), currentTile.getY())) {
+                if (adjacentTile == null || visited[adjacentTile.getX()][adjacentTile.getY()]) {
                     continue;
                 }
-                int adjX = adjacentTile.getX();
-                int adjY = adjacentTile.getY();
 
-                visited[adjX][adjY] = true;
+                visited[adjacentTile.getX()][adjacentTile.getY()] = true;
+
                 if (adjacentTile.isWalkable()) {
-                    return adjacentTile; // Return the walkable tile
+                    return adjacentTile;
                 }
+
                 queue.add(adjacentTile);
             }
         }
+
         return null;
     }
 
