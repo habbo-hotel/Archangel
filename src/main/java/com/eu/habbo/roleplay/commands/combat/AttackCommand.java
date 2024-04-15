@@ -45,17 +45,17 @@ public class AttackCommand extends Command {
 
         if (equippedWeapon != null) {
             String hitSuccessMessage = equippedWeapon.getWeapon().getAttackMessage()
-                    .replace("%username%", targetedHabbo.getHabboInfo().getUsername())
-                    .replace("%damage%", Integer.toString(totalDamage));
+                    .replace(":username", targetedHabbo.getHabboInfo().getUsername())
+                    .replace(":damage", Integer.toString(totalDamage))
+                    .replace(":displayName", equippedWeapon.getWeapon().getDisplayName());
             gameClient.getHabbo().shout(hitSuccessMessage);
         }
 
         if (equippedWeapon == null) {
             String hitSuccessMessage = Emulator.getTexts()
                     .getValue("commands.roleplay.cmd_hit_success")
-                    .replace("%user%", targetedHabbo.getHabboInfo().getUsername())
-                    .replace("%damage%", Integer.toString(totalDamage));
-
+                    .replace(":username", targetedHabbo.getHabboInfo().getUsername())
+                    .replace(":damage", Integer.toString(totalDamage));
             gameClient.getHabbo().shout(hitSuccessMessage);
         }
 
@@ -63,8 +63,8 @@ public class AttackCommand extends Command {
 
         targetedHabbo.shout(Emulator.getTexts().
                 getValue("commands.roleplay.user_health_remaining")
-                .replace("%currentHealth%", Integer.toString(targetedHabbo.getHabboRoleplayStats().getHealthNow()))
-                .replace("%maximumHealth%", Integer.toString(targetedHabbo.getHabboRoleplayStats().getHealthMax()))
+                .replace(":currentHealth", Integer.toString(targetedHabbo.getHabboRoleplayStats().getHealthNow()))
+                .replace(":maximumHealth", Integer.toString(targetedHabbo.getHabboRoleplayStats().getHealthMax()))
         );
 
         return true;

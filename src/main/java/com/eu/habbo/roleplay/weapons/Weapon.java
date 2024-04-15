@@ -55,10 +55,13 @@ public class Weapon {
 
     @Getter
     @Setter
-    private String equipEffect;
+    private int equipEffect;
     @Getter
     @Setter
     private String equipMessage;
+    @Getter
+    @Setter
+    private String unequipMessage;
     @Getter
     @Setter
     private String attackMessage;
@@ -81,8 +84,9 @@ public class Weapon {
         this.weight = set.getInt("weight");
         this.cooldownSeconds = set.getInt("cooldown_seconds");
         this.specialAbilities = set.getString("special_abilities");
-        this.equipEffect = set.getString("equip_effect");
+        this.equipEffect = set.getInt("equip_effect");
         this.equipMessage = set.getString("equip_message");
+        this.unequipMessage = set.getString("unequip_message");
         this.attackMessage = set.getString("attack_message");
     }
 

@@ -62,6 +62,8 @@ import com.eu.habbo.messages.incoming.wired.UpdateActionEvent;
 import com.eu.habbo.messages.incoming.wired.UpdateConditionEvent;
 import com.eu.habbo.messages.incoming.wired.UpdateTriggerEvent;
 import com.eu.habbo.roleplay.messages.incoming.combat.AttackUserEvent;
+import com.eu.habbo.roleplay.messages.incoming.combat.EquipWeaponEvent;
+import com.eu.habbo.roleplay.messages.incoming.combat.ListMyWeaponsEvent;
 import com.eu.habbo.roleplay.messages.incoming.corp.*;
 import com.eu.habbo.roleplay.messages.incoming.game.TimeOfDayQueryEvent;
 import com.eu.habbo.roleplay.messages.incoming.gang.*;
@@ -972,7 +974,11 @@ public enum Incoming {
 
     policeStunEvent(8022, PoliceStunEvent.class),
 
-    policeEscortEvent(8024, PoliceEscortEvent.class);
+    policeEscortEvent(8024, PoliceEscortEvent.class),
+
+    equipWeaponEvent(8025, EquipWeaponEvent.class),
+
+    listMyWeaponsEvent(8026, ListMyWeaponsEvent.class);
 
 
     private final int messageId;

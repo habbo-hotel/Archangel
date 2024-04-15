@@ -442,5 +442,7 @@ public class Outgoing {
 
     public static final int timeOfDayComposer = 9006;
 
+    public static final int myWeaponListComposer = 9007;
+
 
 }

@@ -4,6 +4,8 @@ import com.eu.habbo.Emulator;
 import com.eu.habbo.habbohotel.users.Habbo;
 import com.eu.habbo.roleplay.users.HabboWeapon;
 import gnu.trove.map.hash.THashMap;
+import lombok.Getter;
+import lombok.Setter;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -15,17 +17,12 @@ import java.sql.SQLException;
 public class WeaponsComponent {
     private static final Logger LOGGER = LoggerFactory.getLogger(WeaponsComponent.class);
 
+    @Getter
     private final THashMap<Integer, HabboWeapon> weapons = new THashMap<Integer, HabboWeapon>();
 
+    @Setter
+    @Getter
     private HabboWeapon equippedWeapon;
-
-    public HabboWeapon getEquippedWeapon() {
-        return this.equippedWeapon;
-    }
-
-    public void setEquippedWeapon(HabboWeapon newEquippedWeapon) {
-        this.equippedWeapon = newEquippedWeapon;
-    }
 
 
     public final Habbo habbo;
@@ -54,31 +51,9 @@ public class WeaponsComponent {
         return null;
     }
 
-
-    public HabboWeapon createWeapon(int effectId, int duration) {
-        HabboWeapon weapon;
-        synchronized (this.weapons) {
-            if (this.weapons.containsKey(effectId)) {
-                weapon = this.weapons.get(effectId);
-            } else {
-                weapon = new HabboWeapon(effectId, this.habbo.getHabboInfo().getId());
-                weapon.insert();
-            }
-
-            this.addWeapon(weapon);
-        }
-
-        return weapon;
-    }
-
-    public HabboWeapon createWeapon(int weaponID) {
+    public void createWeapon(int weaponID) {
         HabboWeapon weapon = new HabboWeapon(weaponID, habbo.getHabboInfo().getId());
         this.weapons.put(weaponID, weapon);
-        return weapon;
-    }
-
-    public void addWeapon(HabboWeapon weapon) {
-        this.weapons.put(weapon.getWeaponID(), weapon);
     }
 
     public void dispose() {
