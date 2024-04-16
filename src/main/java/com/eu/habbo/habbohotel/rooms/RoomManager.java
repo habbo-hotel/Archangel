@@ -143,6 +143,20 @@ public class RoomManager {
         }
     }
 
+    public void loadAllRooms() {
+        try (Connection connection = Emulator.getDatabase().getDataSource().getConnection(); PreparedStatement statement = connection.prepareStatement("SELECT * FROM rooms ORDER BY id DESC")) {
+            try (ResultSet set = statement.executeQuery()) {
+                while (set.next()) {
+                    Room room = new Room(set);
+                    room.preventUncaching = true;
+                    this.activeRooms.put(set.getInt("id"), room);
+                }
+            }
+        } catch (SQLException e) {
+            log.error(CAUGHT_SQL_EXCEPTION, e);
+        }
+    }
+
     public void loadPublicRooms() {
         try (Connection connection = Emulator.getDatabase().getDataSource().getConnection(); PreparedStatement statement = connection.prepareStatement("SELECT * FROM rooms WHERE is_public = ? OR is_staff_picked = ? ORDER BY id DESC")) {
             statement.setString(1, "1");

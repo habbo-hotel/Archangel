@@ -93,7 +93,7 @@ public class GameEnvironment {
         this.weaponsManager = WeaponsManager.getInstance();
         this.timeOfDayManager = TimeOfDayManager.getInstance();
 
-        this.roomManager.loadPublicRooms();
+        this.roomManager.loadAllRooms();
         this.navigatorManager.loadNavigator();
 
         this.creditsScheduler = new CreditsScheduler();
