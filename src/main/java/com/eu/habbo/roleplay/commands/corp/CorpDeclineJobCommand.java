@@ -37,7 +37,7 @@ public class CorpDeclineJobCommand extends Command {
 
         targetedCorp.removeInvitedUser(gameClient.getHabbo());
 
-        gameClient.getHabbo().shout(Emulator.getTexts().getValue("commands.roleplay.cmd_corp_invite_rejected").replace("%corp%", targetedCorp.getGuild().getName()));
+        gameClient.getHabbo().shout(Emulator.getTexts().getValue("commands.roleplay.cmd_corp_invite_rejected").replace(":corp", targetedCorp.getGuild().getName()));
 
         return true;
     }

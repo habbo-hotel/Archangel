@@ -37,7 +37,7 @@ public class GangInviteDeclineCommand extends Command {
 
         targetedGang.removeInvitedUser(gameClient.getHabbo());
 
-        gameClient.getHabbo().shout(Emulator.getTexts().getValue("commands.roleplay.cmd_gang_invite_rejected").replace("%gang%", targetedGang.getName()));
+        gameClient.getHabbo().shout(Emulator.getTexts().getValue("commands.roleplay.cmd_gang_invite_rejected").replace(":gang", targetedGang.getName()));
 
         return true;
     }

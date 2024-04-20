@@ -27,7 +27,7 @@ public class CorpDemoteCommand extends Command {
         Habbo targetedHabbo = gameClient.getHabbo().getRoomUnit().getRoom().getRoomUnitManager().getRoomHabboByUsername(targetedUsername);
 
         if (targetedHabbo == null) {
-            gameClient.getHabbo().whisper(Emulator.getTexts().getValue("generic.user_not_found").replace("%username%", targetedUsername));
+            gameClient.getHabbo().whisper(Emulator.getTexts().getValue("generic.user_not_found").replace(":username", targetedUsername));
             return true;
         }
 
@@ -71,13 +71,13 @@ public class CorpDemoteCommand extends Command {
         gameClient.getHabbo().getHabboRoleplayStats().setCorp(targetedHabbo.getHabboRoleplayStats().getCorp().getGuild().getId(), newPosition.getId());
 
         gameClient.getHabbo().shout(Emulator.getTexts().getValue("commands.roleplay.cmd_demote_success")
-                .replace("%username%", targetedHabbo.getHabboInfo().getUsername())
-                .replace("%corp%", targetedHabbo.getHabboRoleplayStats().getCorp().getGuild().getName())
-                .replace("%position%", targetedHabbo.getHabboRoleplayStats().getCorpPosition().getName()));
+                .replace(":username", targetedHabbo.getHabboInfo().getUsername())
+                .replace(":corp", targetedHabbo.getHabboRoleplayStats().getCorp().getGuild().getName())
+                .replace(":position", targetedHabbo.getHabboRoleplayStats().getCorpPosition().getName()));
 
         targetedHabbo.shout(Emulator.getTexts().getValue("generic.roleplay.started_new_job").
-                replace("%corp%", targetedHabbo.getHabboRoleplayStats().getCorp().getGuild().getName())
-                .replace("%position%", newPosition.getName()));
+                replace(":corp", targetedHabbo.getHabboRoleplayStats().getCorp().getGuild().getName())
+                .replace(":position", newPosition.getName()));
 
         return true;
     }

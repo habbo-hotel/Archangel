@@ -40,7 +40,7 @@ public class CorpAcceptJobCommand extends Command {
 
         gameClient.getHabbo().getHabboRoleplayStats().getCorp().removeInvitedUser(gameClient.getHabbo());
 
-        gameClient.getHabbo().shout(Emulator.getTexts().getValue("commands.roleplay.cmd_corp_invite_accepted").replace("%corp%", targetedCorp.getGuild().getName()));
+        gameClient.getHabbo().shout(Emulator.getTexts().getValue("commands.roleplay.cmd_corp_invite_accepted").replace(":corp", targetedCorp.getGuild().getName()));
 
         return true;
     }

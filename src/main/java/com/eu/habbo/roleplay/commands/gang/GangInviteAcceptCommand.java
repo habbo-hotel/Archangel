@@ -40,7 +40,7 @@ public class GangInviteAcceptCommand extends Command {
 
         gameClient.getHabbo().getHabboRoleplayStats().getGang().removeInvitedUser(gameClient.getHabbo());
 
-        gameClient.getHabbo().shout(Emulator.getTexts().getValue("commands.roleplay.cmd_gang_invite_accepted").replace("%gang%", targetedGang.getName()));
+        gameClient.getHabbo().shout(Emulator.getTexts().getValue("commands.roleplay.cmd_gang_invite_accepted").replace(":gang", targetedGang.getName()));
 
         return true;
     }

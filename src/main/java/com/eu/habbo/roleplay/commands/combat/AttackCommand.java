@@ -37,7 +37,7 @@ public class AttackCommand extends Command {
         boolean isTargetWithinRange = Math.abs(distanceX) <= rangeInTiles && Math.abs(distanceY) <= rangeInTiles;
 
         if (!isTargetWithinRange) {
-            gameClient.getHabbo().whisper(Emulator.getTexts().getValue("commands.roleplay.cmd_hit_user_is_out_of_range").replace("%username%", targetedHabbo.getHabboInfo().getUsername()));
+            gameClient.getHabbo().whisper(Emulator.getTexts().getValue("commands.roleplay.cmd_hit_user_is_out_of_range").replace(":username", targetedHabbo.getHabboInfo().getUsername()));
             return true;
         }
 

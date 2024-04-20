@@ -28,8 +28,8 @@ public class SetHealthCommand extends Command {
         int updatedHealth = Integer.parseInt(params[2]);
 
         String healthGivenMessage = Emulator.getTexts().getValue("roleplay.set_health_gave")
-                .replace("%username%", targetedUsername)
-                .replace("%healthRestored%", Integer.toString(updatedHealth));
+                .replace(":username", targetedUsername)
+                .replace(":healthRestored", Integer.toString(updatedHealth));
 
         gameClient.getHabbo().shout(healthGivenMessage);
 
@@ -37,8 +37,8 @@ public class SetHealthCommand extends Command {
 
         targetedHabbo.shout(Emulator.getTexts().
                 getValue("commands.roleplay.user_health_remaining")
-                .replace("%currentHealth%", Integer.toString(targetedHabbo.getHabboRoleplayStats().getHealthNow()))
-                .replace("%maximumHealth%", Integer.toString(targetedHabbo.getHabboRoleplayStats().getHealthMax()))
+                .replace(":currentHealth", Integer.toString(targetedHabbo.getHabboRoleplayStats().getHealthNow()))
+                .replace(":maximumHealth", Integer.toString(targetedHabbo.getHabboRoleplayStats().getHealthMax()))
         );
 
         return true;

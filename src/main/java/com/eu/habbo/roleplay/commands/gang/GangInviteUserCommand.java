@@ -43,9 +43,9 @@ public class GangInviteUserCommand extends Command {
 
         gameClient.getHabbo().getHabboRoleplayStats().getGang().addInvitedUser(targetedHabbo);
 
-        gameClient.getHabbo().shout(Emulator.getTexts().getValue("commands.roleplay.cmd_gang_invite_sent").replace("%user%", targetedHabbo.getHabboInfo().getUsername()));
+        gameClient.getHabbo().shout(Emulator.getTexts().getValue("commands.roleplay.cmd_gang_invite_sent").replace(":username", targetedHabbo.getHabboInfo().getUsername()));
 
-        targetedHabbo.whisper(Emulator.getTexts().getValue("commands.roleplay.cmd_gang_invite_received").replace("%gang%",gameClient.getHabbo().getHabboRoleplayStats().getGang().getName()));
+        targetedHabbo.whisper(Emulator.getTexts().getValue("commands.roleplay.cmd_gang_invite_received").replace(":gang",gameClient.getHabbo().getHabboRoleplayStats().getGang().getName()));
 
         return true;
     }

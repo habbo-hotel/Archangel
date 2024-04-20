@@ -206,5 +206,5 @@ public class RoomTile implements Comparable<RoomTile> {
 
         return roomUnit.getCurrentPosition().getY() < this.y + item.getWidth();
     }
-    
+
 }
