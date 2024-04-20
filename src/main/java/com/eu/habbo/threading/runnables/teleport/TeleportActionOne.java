@@ -21,12 +21,6 @@ public class TeleportActionOne implements Runnable {
         if (this.client.getHabbo().getRoomUnit().getRoom() != this.room)
             return;
 
-        int delay = 500;
-
-        if (this.currentTeleport instanceof InteractionTeleportTile) {
-            delay = 0;
-        }
-
         if (this.client.getHabbo().getRoomUnit().getCurrentPosition() != this.room.getLayout().getTile(this.currentTeleport.getCurrentPosition().getX(), this.currentTeleport.getCurrentPosition().getY())) {
             this.client.getHabbo().getRoomUnit().setLocation(this.room.getLayout().getTile(this.currentTeleport.getCurrentPosition().getX(), this.currentTeleport.getCurrentPosition().getY()));
             this.client.getHabbo().getRoomUnit().setRotation(RoomRotation.values()[(this.currentTeleport.getRotation() + 4) % 8]);
@@ -35,6 +29,6 @@ public class TeleportActionOne implements Runnable {
             this.client.getHabbo().getRoomUnit().setLocation(this.room.getLayout().getTile(this.currentTeleport.getCurrentPosition().getX(), this.currentTeleport.getCurrentPosition().getY()));
         }
 
-        Emulator.getThreading().run(new TeleportActionTwo(this.currentTeleport, this.room, this.client), delay);
+        Emulator.getThreading().run(new TeleportActionTwo(this.currentTeleport, this.room, this.client));
     }
 }

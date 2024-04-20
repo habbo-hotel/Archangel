@@ -58,7 +58,7 @@ class TeleportActionFive implements Runnable {
         this.currentTeleport.setExtraData("1");
         this.room.updateItem(this.currentTeleport);
 
-        Emulator.getThreading().run(new HabboItemNewState(this.currentTeleport, this.room, "0"), 1000);
+        Emulator.getThreading().run(new HabboItemNewState(this.currentTeleport, this.room, "0"));
 
         RoomItem teleportTile = this.room.getRoomItemManager().getTopItemAt(unit.getCurrentPosition().getX(), unit.getCurrentPosition().getY());
 
