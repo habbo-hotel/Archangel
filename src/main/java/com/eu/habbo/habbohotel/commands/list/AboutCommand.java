@@ -55,7 +55,7 @@ public class AboutCommand extends Command {
 
         message.append("<b>Roleplay Edition</b>\nBy LeChris\n\n");
 
-        message.append("<b>Morningstar Contributors</b>\n");
+        message.append("<b>Arcturus Contributors</b>\n");
 
         for (String contributor : AboutCommand.CONTRIBUTORS) {
             message.append(contributor + "\n");

@@ -37,7 +37,7 @@ public final class Emulator {
     public static final int MINOR = 0;
     public static final int REVISION = 0;
     public static final String PREVIEW = "Developer Preview";
-    public static final String VERSION = "Arcturus Morningstar" + " " + MAJOR + "." + MINOR + "." + REVISION + " " + PREVIEW;
+    public static final String VERSION = "Arcturus Archangel" + " " + MAJOR + "." + MINOR + "." + REVISION + " " + PREVIEW;
     public static String build = "";
     public static boolean isReady = false;
     public static boolean isShuttingDown = false;
@@ -140,7 +140,7 @@ public final class Emulator {
             Emulator.rconServer.connect();
             Emulator.badgeImager = new BadgeImager();
 
-            log.info("Arcturus Morningstar has successfully loaded.");
+            log.info("Arcturus Archangel has successfully loaded.");
             log.info("System launched in: {}ms. Using {} threads!", (System.nanoTime() - startTime) / 1e6, Runtime.getRuntime().availableProcessors() * 2);
             log.info("Memory: {}/{}MB", (runtime.totalMemory() - runtime.freeMemory()) / (1024 * 1024), (runtime.freeMemory()) / (1024 * 1024));
 
@@ -222,7 +222,7 @@ public final class Emulator {
         Emulator.isShuttingDown = true;
         Emulator.isReady = false;
 
-        log.info("Stopping Arcturus Morningstar {}", VERSION);
+        log.info("Stopping Arcturus Archangel {}", VERSION);
 
         try {
             if (Emulator.getPluginManager() != null)
@@ -273,7 +273,7 @@ public final class Emulator {
         } catch (Exception ignored) {
         }
 
-        log.info("Stopped Arcturus Morningstar {}", VERSION);
+        log.info("Stopped Arcturus Archangel {}", VERSION);
 
         if (Emulator.database != null) {
             Emulator.getDatabase().dispose();
