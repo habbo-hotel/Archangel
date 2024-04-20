@@ -10,7 +10,7 @@ import lombok.Setter;
 
 import java.util.HashSet;
 
-public class RoomTile {
+public class RoomTile implements Comparable<RoomTile> {
     @Getter
     private final short x;
     @Getter
@@ -62,6 +62,13 @@ public class RoomTile {
 
         this.roomUnits = tile.roomUnits;
         this.roomItems = tile.roomItems;
+    }
+
+    @Override
+    public int compareTo(RoomTile other) {
+        // Implement comparison logic here
+        // For example, compare based on F cost
+        return Double.compare(this.getfCosts(), other.getfCosts());
     }
 
     public void setStackHeight(double stackHeight) {
@@ -199,4 +206,5 @@ public class RoomTile {
 
         return roomUnit.getCurrentPosition().getY() < this.y + item.getWidth();
     }
+    
 }

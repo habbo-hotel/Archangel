@@ -232,61 +232,42 @@ public class RoomLayout {
         return this.findPath(oldTile, newTile, goalLocation, roomUnit, false);
     }
 
-    /// Pathfinder Reworked By Quadral, thanks buddy!! You Saved Morningstar <3
-    public final Deque<RoomTile> findPath(RoomTile oldTile, RoomTile newTile, RoomTile goalLocation, RoomUnit roomUnit, boolean isWalktroughRetry) {
+    /// AMG
+    public Deque<RoomTile> findPath(RoomTile oldTile, RoomTile newTile, RoomTile goalLocation, RoomUnit roomUnit, boolean isWalkthroughRetry) {
         if (this.room == null || !this.room.isLoaded() || oldTile == null || newTile == null || oldTile.equals(newTile) || newTile.getState() == RoomTileState.INVALID)
             return new LinkedList<>();
 
-        LinkedList<RoomTile> openList = new LinkedList<>();
-        List<RoomTile> closedList = new LinkedList<>();
+        PriorityQueue<RoomTile> openList = new PriorityQueue<>();
+        HashSet<RoomTile> closedList = new HashSet<>();
         openList.add(oldTile.copy());
 
         RoomTile doorTile = this.room.getLayout().getDoorTile();
 
         while (!openList.isEmpty()) {
-            RoomTile current = this.lowestFInOpen(openList);
+            RoomTile current = openList.poll();
             if (current.getX() == newTile.getX() && current.getY() == newTile.getY()) {
                 return this.calcPath(this.findTile(openList, oldTile.getX(), oldTile.getY()), current);
             }
 
             closedList.add(current);
-            openList.remove(current);
 
-            List<RoomTile> adjacentNodes = this.getAdjacent(openList, current, newTile, roomUnit);
-            for (RoomTile currentAdj : adjacentNodes) {
+            for (RoomTile currentAdj : this.getAdjacent(openList, current, newTile, roomUnit)) {
                 if (closedList.contains(currentAdj)) continue;
-
-                if (roomUnit.canOverrideTile(currentAdj)) {
-                    currentAdj.setPrevious(current);
-                    currentAdj.sethCosts(this.findTile(openList, newTile.getX(), newTile.getY()));
-                    currentAdj.setgCosts(current);
-                    openList.add(currentAdj);
-                    continue;
-                }
-
-                if (currentAdj.getState() == RoomTileState.BLOCKED || ((currentAdj.getState() == RoomTileState.SIT || currentAdj.getState() == RoomTileState.LAY) && !currentAdj.equals(goalLocation))) {
-                    closedList.add(currentAdj);
-                    openList.remove(currentAdj);
-                    continue;
-                }
 
                 double height = currentAdj.getStackHeight() - current.getStackHeight();
 
                 if ((!ALLOW_FALLING && height < -MAXIMUM_STEP_HEIGHT) || (currentAdj.getState() == RoomTileState.OPEN && height > MAXIMUM_STEP_HEIGHT)) {
                     closedList.add(currentAdj);
-                    openList.remove(currentAdj);
                     continue;
                 }
 
                 RoomUnit exception = null;
-
                 if(roomUnit instanceof RoomAvatar roomAvatar && roomAvatar.isRiding()) {
                     exception = roomAvatar.getRidingPet().getRoomUnit();
                 }
 
-                if (this.room.getRoomUnitManager().areRoomUnitsAt(currentAdj, exception) && doorTile.distance(currentAdj) > 2 && (!isWalktroughRetry || !this.room.getRoomInfo().isAllowWalkthrough() || currentAdj.equals(goalLocation))) {
+                if (this.room.getRoomUnitManager().areRoomUnitsAt(currentAdj, exception) && doorTile.distance(currentAdj) > 2 && (!isWalkthroughRetry || !this.room.getRoomInfo().isAllowWalkthrough() || currentAdj.equals(goalLocation))) {
                     closedList.add(currentAdj);
-                    openList.remove(currentAdj);
                     continue;
                 }
 
@@ -302,7 +283,7 @@ public class RoomLayout {
             }
         }
 
-        if (this.room.getRoomInfo().isAllowWalkthrough() && !isWalktroughRetry) {
+        if (this.room.getRoomInfo().isAllowWalkthrough() && !isWalkthroughRetry) {
             return this.findPath(oldTile, newTile, goalLocation, roomUnit, true);
         }
 
@@ -352,7 +333,7 @@ public class RoomLayout {
         return null;
     }
 
-    private RoomTile findTile(List<RoomTile> tiles, short x, short y) {
+    private RoomTile findTile(PriorityQueue<RoomTile> tiles, short x, short y) {
         for (RoomTile tile : tiles) {
             if (x == tile.getX() && y == tile.getY()) {
                 return tile;
@@ -396,7 +377,7 @@ public class RoomLayout {
         return cheapest;
     }
 
-    private List<RoomTile> getAdjacent(List<RoomTile> openList, RoomTile node, RoomTile nextTile, RoomUnit unit) {
+    private List<RoomTile> getAdjacent(PriorityQueue<RoomTile> openList, RoomTile node, RoomTile nextTile, RoomUnit unit) {
         short x = node.getX();
         short y = node.getY();
         List<RoomTile> adj = new LinkedList<>();
