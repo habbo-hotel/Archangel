@@ -28,7 +28,7 @@ class TeleportActionTwo implements Runnable {
 
     @Override
     public void run() {
-        int delayOffset = 500;
+        int delayOffset = 0;
 
         if (this.currentTeleport instanceof InteractionTeleportTile) {
             delayOffset = 0;

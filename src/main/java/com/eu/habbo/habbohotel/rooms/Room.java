@@ -100,8 +100,8 @@ public class Room implements Comparable<Room>, ISerialize, Runnable {
     private final TIntIntMap furniOwnerCount;
     private final Object loadLock = new Object();
     //Use appropriately. Could potentially cause memory leaks when used incorrectly.
-    public volatile boolean preventUnloading = false;
-    public volatile boolean preventUncaching = false;
+    public volatile boolean preventUnloading = true;
+    public volatile boolean preventUncaching = true;
     public final ConcurrentHashMap.KeySetView<ServerMessage, Boolean> scheduledComposers = ConcurrentHashMap.newKeySet();
 
     public ConcurrentHashMap.KeySetView<Runnable, Boolean> scheduledTasks = ConcurrentHashMap.newKeySet();
